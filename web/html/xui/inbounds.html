@@ -126,7 +126,11 @@
                                             <a-icon type="edit"></a-icon>
                                             {{ i18n "edit" }}
                                         </a-menu-item>
-                                        <template v-if="dbInbound.isTrojan || dbInbound.isVLess || dbInbound.isVMess || dbInbound.isSS">
+                                        <a-menu-item key="qrcode" v-if="dbInbound.isSS && !dbInbound.toInbound().isSSMultiUser">
+                                            <a-icon type="qrcode"></a-icon>
+                                            {{ i18n "qrCode" }}
+                                        </a-menu-item>
+                                        <template v-if="dbInbound.isTrojan || dbInbound.isVLess || dbInbound.isVMess || dbInbound.toInbound().isSSMultiUser">
                                             <a-menu-item key="addClient">
                                                 <a-icon type="user-add"></a-icon>
                                                 {{ i18n "pages.client.add"}}
@@ -149,7 +153,11 @@
                                             </a-menu-item>
                                         </template>
                                         <template v-else>
-                                            <a-menu-item key="showInfoOther">
+                                            <a-menu-item v-if="dbInbound.isSS && !dbInbound.toInbound().isSSMultiUser" key="showInfo">
+                                                <a-icon type="info-circle"></a-icon>
+                                                {{ i18n "info"}}
+                                            </a-menu-item>
+                                            <a-menu-item v-else key="showInfoOther">
                                                 <a-icon type="info-circle"></a-icon>
                                                 {{ i18n "info"}}
                                             </a-menu-item>
@@ -247,7 +255,7 @@
                                     {{template "client_table"}}
                                 </a-table>
                                 <a-table
-                                    v-else-if="record.protocol === Protocols.TROJAN || record.protocol === Protocols.SHADOWSOCKS"
+                                    v-else-if="record.protocol === Protocols.TROJAN || record.toInbound().isSSMultiUser"
                                     :row-key="client => client.id"
                                     :columns="innerTrojanColumns"
                                     :data-source="getInboundClients(record)"
@@ -407,6 +415,9 @@
                     this.inbounds.push(to_inbound);
                     this.dbInbounds.push(dbInbound);
                     if ([Protocols.VMESS, Protocols.VLESS, Protocols.TROJAN, Protocols.SHADOWSOCKS].includes(inbound.protocol)) {
+                        if (inbound.protocol === Protocols.SHADOWSOCKS && (!to_inbound.isSSMultiUser)) {
+                            continue;
+                        }
                         this.clientCount[inbound.id] = this.getClientCounts(inbound, to_inbound);
                     }
                 }
