@@ -382,11 +382,10 @@ class WsStreamSettings extends XrayCommonClass {
 }
 
 class HttpStreamSettings extends XrayCommonClass {
-    constructor(path='/', host=[''],sockopt={acceptProxyProtocol: false}) {
+    constructor(path='/', host=['']) {
         super();
         this.path = path;
         this.host = host.length === 0 ? [''] : host;
-        this.sockopt = sockopt;
     }
 
     addHost(host) {
@@ -398,7 +397,7 @@ class HttpStreamSettings extends XrayCommonClass {
     }
 
     static fromJson(json={}) {
-        return new HttpStreamSettings(json.path, json.host, json.sockopt);
+        return new HttpStreamSettings(json.path, json.host);
     }
 
     toJson() {
@@ -411,7 +410,6 @@ class HttpStreamSettings extends XrayCommonClass {
         return {
             path: this.path,
             host: host,
-            sockopt: this.sockopt,
         }
     }
 }
@@ -445,22 +443,20 @@ class QuicStreamSettings extends XrayCommonClass {
 }
 
 class GrpcStreamSettings extends XrayCommonClass {
-    constructor(serviceName="", multiMode=false, sockopt={acceptProxyProtocol: false}) {
+    constructor(serviceName="", multiMode=false) {
         super();
         this.serviceName = serviceName;
         this.multiMode = multiMode;
-        this.sockopt = sockopt;
     }
 
     static fromJson(json={}) {
-        return new GrpcStreamSettings(json.serviceName, json.multiMode, json.sockopt);
+        return new GrpcStreamSettings(json.serviceName, json.multiMode);
     }
 
     toJson() {
         return {
             serviceName: this.serviceName,
             multiMode: this.multiMode,
-            sockopt: this.sockopt,
         }
     }
 }
@@ -677,6 +673,27 @@ RealityStreamSettings.Settings = class extends XrayCommonClass {
     }
 };
 
+class SockoptStreamSettings extends XrayCommonClass {
+    constructor(
+        acceptProxyProtocol = false,
+    ) {
+        super();
+        this.acceptProxyProtocol = acceptProxyProtocol;
+    }
+
+    static fromJson(json = {}) {
+        return new SockoptStreamSettings(
+            json.acceptProxyProtocol,
+        );
+    }
+
+    toJson() {
+        return {
+            acceptProxyProtocol: this.acceptProxyProtocol,
+        };
+    }
+}
+
 class StreamSettings extends XrayCommonClass {
     constructor(network='tcp',
                 security='none',
@@ -688,6 +705,7 @@ class StreamSettings extends XrayCommonClass {
                 httpSettings=new HttpStreamSettings(),
                 quicSettings=new QuicStreamSettings(),
                 grpcSettings=new GrpcStreamSettings(),
+                sockopt = new SockoptStreamSettings(),
                 ) {
         super();
         this.network = network;
@@ -700,6 +718,7 @@ class StreamSettings extends XrayCommonClass {
         this.http = httpSettings;
         this.quic = quicSettings;
         this.grpc = grpcSettings;
+        this.sockopt = sockopt;
     }
 
     get isTls() {
@@ -726,6 +745,16 @@ class StreamSettings extends XrayCommonClass {
         }
     }
 
+    get isSockopt() {
+        return ['http', 'grpc'].indexOf(this.network) !== -1;
+    }
+
+    set isSockopt(isSockopt) {
+        if (isSockopt) {
+            return ['http', 'grpc'].indexOf(this.network) !== -1;
+        }
+    }
+
     static fromJson(json={}) {
 
         return new StreamSettings(
@@ -739,6 +768,7 @@ class StreamSettings extends XrayCommonClass {
             HttpStreamSettings.fromJson(json.httpSettings),
             QuicStreamSettings.fromJson(json.quicSettings),
             GrpcStreamSettings.fromJson(json.grpcSettings),
+            SockoptStreamSettings.fromJson(json.sockopt),
         );
     }
 
@@ -755,6 +785,7 @@ class StreamSettings extends XrayCommonClass {
             httpSettings: network === 'http' ? this.http.toJson() : undefined,
             quicSettings: network === 'quic' ? this.quic.toJson() : undefined,
             grpcSettings: network === 'grpc' ? this.grpc.toJson() : undefined,
+            sockopt: this.isSockopt ? this.sockopt.toJson() : undefined,
         };
     }
 }
