@@ -88,7 +88,7 @@
                     <a-col :sm="24" :md="12">
                         <a-card hoverable style="border-radius: 5px;" :class="themeSwitcher.darkCardClass">
                             {{ i18n "pages.index.toolBox" }}:
-                            <a-tag color="blue" style="cursor: pointer;" @click="openLogs(20)"><a-icon 
+                            <a-tag color="blue" style="cursor: pointer;" @click="openLogs()"><a-icon 
                                 :style="themeSwitcher.darkCardClass ? 'color: #3c9ae8' : ''" type="eye"></a-icon> {{ i18n "pages.index.logs" }}</a-tag>
                             <a-tag color="blue" style="cursor: pointer;" @click="openBackup"><a-icon 
                                 :style="themeSwitcher.darkCardClass ? 'color: #3c9ae8' : ''" type="snippets"></a-icon> {{ i18n "pages.index.backup" }}</a-tag>
@@ -234,7 +234,7 @@
             <a-form-item label="Count">
                 <a-select v-model="logModal.rows"
                 style="width: 80px"
-                @change="openLogs(logModal.rows)"
+                @change="openLogs()"
                 :dropdown-class-name="themeSwitcher.darkCardClass">
                     <a-select-option value="10">10</a-select-option>
                     <a-select-option value="20">20</a-select-option>
@@ -242,8 +242,22 @@
                     <a-select-option value="100">100</a-select-option>
                 </a-select>
             </a-form-item>
+            <a-form-item label="Log Level">
+                <a-select v-model="logModal.level"
+                style="width: 120px"
+                @change="openLogs()"
+                :dropdown-class-name="themeSwitcher.darkCardClass">
+                    <a-select-option value="debug">Debug</a-select-option>
+                    <a-select-option value="info">Info</a-select-option>
+                    <a-select-option value="warning">Warning</a-select-option>
+                    <a-select-option value="err">Error</a-select-option>
+                </a-select>
+            </a-form-item>
+            <a-form-item label="SysLog">
+                <a-checkbox v-model="logModal.syslog" @change="openLogs()"></a-checkbox>
+            </a-form-item>
             <a-form-item>
-                <a-button icon="sync" type="primary" @click="openLogs(logModal.rows)">{{ i18n "reload" }}</a-button>
+                <a-button icon="sync" type="primary" @click="openLogs()">{{ i18n "reload" }}</a-button>
             </a-form-item>
             <a-form-item>
                 <a-button icon="cloud-download" type="primary" style="margin-bottom: 10px;"
@@ -372,10 +386,11 @@
         visible: false,
         logs: '',
         rows: 20,
+        level: 'info',
+        syslog: false,
         show(logs, rows) {
             this.visible = true;
-            this.rows = rows;
-            this.logs = logs.join("\n");
+            this.logs = logs? logs.join("\n"): "No Record...";
         },
         hide() {
             this.visible = false;
@@ -472,14 +487,14 @@
                     return;
                 }
             },
-            async openLogs(rows){
+            async openLogs(){
                 this.loading(true);
-                const msg = await HttpUtil.post('server/logs/'+rows);
+                const msg = await HttpUtil.post('server/logs/'+logModal.rows,{level: logModal.level, syslog: logModal.syslog});
                 this.loading(false);
                 if (!msg.success) {
                     return;
                 }
-                logModal.show(msg.obj, rows);
+                logModal.show(msg.obj);
             },
             async openConfig() {
                 this.loading(true);
