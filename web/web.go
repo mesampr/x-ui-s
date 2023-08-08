@@ -84,7 +84,7 @@ type Server struct {
 	server *controller.ServerController
 	xui    *controller.XUIController
 	api    *controller.APIController
-  otp    *controller.OTPController
+	otp    *controller.OTPController
 
 	xrayService    service.XrayService
 	settingService service.SettingService
@@ -227,7 +227,7 @@ func (s *Server) initRouter() (*gin.Engine, error) {
 	s.server = controller.NewServerController(g)
 	s.xui = controller.NewXUIController(g)
 	s.api = controller.NewAPIController(g)
-  s.otp = controller.NewOTPController(g)
+	s.otp = controller.NewOTPController(g)
 
 	return engine, nil
 }
@@ -330,9 +330,9 @@ func (s *Server) Start() (err error) {
 	}
 
 	if certFile != "" || keyFile != "" {
-		logger.Info("web server run https on", listener.Addr())
+		logger.Info("Web server run https on", listener.Addr())
 	} else {
-		logger.Info("web server run http on", listener.Addr())
+		logger.Info("Web server run http on", listener.Addr())
 	}
 	s.listener = listener
 

@@ -45,17 +45,28 @@
             </template>
             </table>
         </td></tr>
-            <tr colspan="2" v-if="dbInbound.hasLink()">
-                <td v-if="inbound.tls">
-                    TLS <a-tag color="green">{{ i18n "enabled" }}</a-tag><br />
-                    TLS {{ i18n "domainName" }} <a-tag :color="inbound.serverName ? 'green' : 'orange'">[[ inbound.serverName ? inbound.serverName : '' ]]</a-tag>
-                </td>
-                <td v-else-if="inbound.reality">
-                    Reality <a-tag color="green">{{ i18n "enabled" }}</a-tag><br />
-                    Reality destination <a-tag :color="inbound.stream.reality.dest ? 'green' : 'orange'">[[ inbound.stream.reality.dest ]]</a-tag>
-                </td>
-                <td v-else>tls: <a-tag color="red">{{ i18n "disabled" }}</a-tag>
+        <tr colspan="2" v-if="dbInbound.hasLink()">
+            <td v-if="inbound.tls">
+                tls: <a-tag color="green">{{ i18n "enabled" }}</a-tag><br />
+                tls {{ i18n "domainName" }}: <a-tag :color="inbound.serverName ? 'green' : 'orange'">[[ inbound.serverName ? inbound.serverName : '' ]]</a-tag>
             </td>
+            <td v-else-if="inbound.reality">
+                reality: <a-tag color="green">{{ i18n "enabled" }}</a-tag><br />
+                reality Destination: <a-tag :color="inbound.stream.reality.dest ? 'green' : 'orange'">[[ inbound.stream.reality.dest ]]</a-tag>
+            </td>
+            <td v-else>tls: <a-tag color="red">{{ i18n "disabled" }}</a-tag></td>
+        </tr>
+    </table>
+    <table v-if="dbInbound.isSS" style="margin-bottom: 10px; width: 100%;">
+        <tr>
+            <td>{{ i18n "encryption" }}</td>
+            <td><a-tag color="green">[[ inbound.settings.method ]]</a-tag></td>
+        </tr><tr v-if="inbound.isSS2022">
+            <td>{{ i18n "password" }}</td>
+            <td><a-tag color="blue">[[ inbound.settings.password ]]</a-tag></td>
+        </tr><tr>
+            <td>{{ i18n "pages.inbounds.network" }}</td>
+            <td><a-tag color="green">[[ inbound.settings.network ]]</a-tag></td>
         </tr>
     </table>
     <template v-if="infoModal.clientSettings">

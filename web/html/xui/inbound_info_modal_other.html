@@ -31,7 +31,6 @@
                 <td><a-tag color="blue">[[ inbound.settings.followRedirect ]]</a-tag></td>
             </tr>
         </table>
-        </table>
         <table v-if="inbound.protocol == Protocols.SOCKS" style="margin-bottom: 10px; width: 100%;">
             <tr>
                 <th>{{ i18n "password" }} Auth</th>
@@ -48,17 +47,19 @@
                 <td>{{ i18n "password" }} <a-tag color="green">[[ account.pass ]]</a-tag></td>
             </tr>
         </table>
-        </table>
-        <table v-if="inbound.protocol == Protocols.HTTP" style="margin-bottom: 10px; width: 100%;">
+        <table v-if="dbInbound.isHTTP" style="margin-bottom: 10px; width: 100%;">
             <tr>
-                <th> </th>
                 <th>{{ i18n "username" }}</th>
                 <th>{{ i18n "password" }}</th>
-            </tr><tr v-for="account,index in inbound.settings.accounts">
-                <td><a-tag color="blue">[[ account.user ]]</a-tag></td>
-                <td><a-tag color="green">[[ account.pass ]]</a-tag></td>
             </tr>
-        </table>
+            <tr v-for="account,index in inbound.settings.accounts">
+                <td>
+                    <a-tag color="blue">[[ account.user ]]</a-tag>
+                </td>
+                <td>
+                    <a-tag color="green">[[ account.pass ]]</a-tag>
+                </td>
+            </tr>
         </table>
     </template>
     <div v-if = "inbound.protocol == Protocols.SOCKS">
