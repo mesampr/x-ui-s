@@ -1418,8 +1418,9 @@ class Inbound extends XrayCommonClass {
         }
 
         let password = new Array();
-        if (this.isSSMultiUser) password.push(settings.shadowsockses[clientIndex].password);
+
         if (this.isSS2022) password.push(settings.password);
+        if (this.isSSMultiUser) password.push(settings.shadowsockses[clientIndex].password);
 
         let link = `ss://${safeBase64(settings.method + ':' + password.join(':'))}@${address}:${this.port}`;
         const url = new URL(link);
@@ -1644,12 +1645,9 @@ Inbound.Settings = class extends XrayCommonClass {
 };
 
 Inbound.VmessSettings = class extends Inbound.Settings {
-    constructor(protocol,
-                vmesses=[new Inbound.VmessSettings.Vmess()],
-                disableInsecureEncryption=false) {
+    constructor(protocol, vmesses=[new Inbound.VmessSettings.Vmess()]) {
         super(protocol);
         this.vmesses = vmesses;
-        this.disableInsecure = disableInsecureEncryption;
     }
 
     indexOfVmessById(id) {
@@ -1673,15 +1671,13 @@ Inbound.VmessSettings = class extends Inbound.Settings {
     static fromJson(json={}) {
         return new Inbound.VmessSettings(
             Protocols.VMESS,
-            json.clients.map(client => Inbound.VmessSettings.Vmess.fromJson(client)),
-            ObjectUtil.isEmpty(json.disableInsecureEncryption) ? false : json.disableInsecureEncryption,
+            json.clients.map(client => Inbound.VmessSettings.Vmess.fromJson(client))
         );
     }
 
     toJson() {
         return {
-            clients: Inbound.VmessSettings.toJsonArray(this.vmesses),
-            disableInsecureEncryption: this.disableInsecure,
+            clients: Inbound.VmessSettings.toJsonArray(this.vmesses)
         };
     }
 };

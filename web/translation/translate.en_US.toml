@@ -137,7 +137,6 @@
 "network" = "Network"
 "destinationPort" = "Destination Port"
 "targetAddress" = "Target Address"
-"disableInsecureEncryption" = "Disable Insecure Encryption"
 "monitorDesc" = "Leave blank by default"
 "meansNoLimit" = "Means No Limit"
 "totalFlow" = "Total Flow"
