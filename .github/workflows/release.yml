@@ -17,6 +17,7 @@ jobs:
           go-version: 'stable'
       - name: build linux amd64 version
         run: |
+          go clean -modcache
           CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -o xui-release -v main.go
           mkdir x-ui
           cp xui-release x-ui/xui-release
@@ -57,6 +58,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt install gcc-aarch64-linux-gnu
+          go clean -modcache
           CGO_ENABLED=1 GOOS=linux GOARCH=arm64 CC=aarch64-linux-gnu-gcc go build -o xui-release -v main.go
           mkdir x-ui
           cp xui-release x-ui/xui-release
