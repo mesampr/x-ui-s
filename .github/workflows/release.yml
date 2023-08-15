@@ -15,9 +15,10 @@ jobs:
         uses: actions/setup-go@v4.1.0
         with:
           go-version: 'stable'
-      - name: build linux amd64 version
         run: |
           go clean -modcache
+      - name: build linux amd64 version
+        run: |
           CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -o xui-release -v main.go
           mkdir x-ui
           cp xui-release x-ui/xui-release
@@ -54,6 +55,8 @@ jobs:
         uses: actions/setup-go@v4.1.0
         with:
           go-version: 'stable'
+        run: |
+          go clean -modcache
       - name: build linux arm64 version
         run: |
           sudo apt-get update
