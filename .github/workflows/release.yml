@@ -8,7 +8,7 @@ on:
 jobs:
   linuxamd64build:
     name: build x-ui amd64 version
-    runs-on: ubuntu-20.04
+    runs-on: debian-11
     steps:
       - uses: actions/checkout@v3.5.3
       - name: Set up Go
